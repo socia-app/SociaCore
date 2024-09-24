@@ -33,6 +33,10 @@ export type OpenAPIConfig = {
   PASSWORD?: string | Resolver<string> | undefined
   RESULT?: TResult
   TOKEN?: string | Resolver<string> | undefined
+  TOKEN: async () => {
+    const token = localStorage.getItem("access_token");
+    return token ? `Bearer ${token}` : "";
+  },
   USERNAME?: string | Resolver<string> | undefined
   VERSION: string
   WITH_CREDENTIALS: boolean
@@ -55,3 +59,4 @@ export const OpenAPI: OpenAPIConfig = {
   WITH_CREDENTIALS: false,
   interceptors: { request: new Interceptors(), response: new Interceptors() },
 }
+
