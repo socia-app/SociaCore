@@ -3,6 +3,7 @@
 ## Latest Changes
 
 * 👷 Do not sync labels as it overrides manually added labels. PR [#1307](https://github.com/fastapi/full-stack-fastapi-template/pull/1307) by [@tiangolo](https://github.com/tiangolo).
+* 🔥 Remove frontend code entirely to focus on backend development. This includes deleting the frontend directory and updating related configurations. 
 
 ### Refactors
 
@@ -456,3 +457,4 @@ Several bug fixes since initial publication, including:
 * Order of path operations for users.
 * Frontend sending login data in the correct format.
 * Add https://localhost variants to CORS.
+

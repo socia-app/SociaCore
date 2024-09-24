@@ -15,11 +15,9 @@ docker compose up -d
 
 * Now you can open your browser and interact with these URLs:
 
-Frontend, built with Docker, with routes handled based on the path: http://localhost
-
 Backend, JSON based web API based on OpenAPI: http://localhost/api/
 
-Automatic interactive documentation with Swagger UI (from the OpenAPI backend): http://localhost/docs
+Automatic interactive documentation with Swagger UI: http://localhost/docs
 
 Adminer, database web administration: http://localhost:8080
 
@@ -39,7 +37,7 @@ To check the logs of a specific service, add the name of the service, e.g.:
 docker compose logs backend
 ```
 
-If your Docker is not running in `localhost` (the URLs above wouldn't work) you would need to use the IP or domain where your Docker is running.
+If your Docker is not running in `localhost` (the URLs above wouldn't work), you would need to use the IP or domain where your Docker is running.
 
 ## Backend local development, additional details
 
@@ -204,3 +202,4 @@ The email templates are in `./backend/app/email-templates/`. Here, there are two
 Before continuing, ensure you have the [MJML extension](https://marketplace.visualstudio.com/items?itemName=attilabuti.vscode-mjml) installed in your VS Code.
 
 Once you have the MJML extension installed, you can create a new email template in the `src` directory. After creating the new email template and with the `.mjml` file open in your editor, open the command palette with `Ctrl+Shift+P` and search for `MJML: Export to HTML`. This will convert the `.mjml` file to a `.html` file and now you can save it in the build directory.
+
