@@ -11,6 +11,7 @@ import {
   type UserRegister,
   UsersService,
 } from "../client"
+import { OpenAPI } from "../client/core/OpenAPI"
 import useCustomToast from "./useCustomToast"
 
 const isLoggedIn = () => {
@@ -59,6 +60,7 @@ const useAuth = () => {
       formData: data,
     })
     localStorage.setItem("access_token", response.access_token)
+    OpenAPI.TOKEN = response.access_token
   }
 
   const loginMutation = useMutation({
@@ -83,6 +85,7 @@ const useAuth = () => {
 
   const logout = () => {
     localStorage.removeItem("access_token")
+    OpenAPI.TOKEN = undefined
     navigate({ to: "/login" })
   }
 

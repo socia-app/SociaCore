@@ -14,14 +14,14 @@ ALGORITHM = "HS256"
 
 def create_access_token(subject: str | Any, expires_delta: timedelta) -> str:
     """
-    Create a JWT access token.
+    Generate a JWT access token.
 
     Args:
         subject (str | Any): The subject of the token, typically a user ID.
         expires_delta (timedelta): The time duration after which the token will expire.
 
     Returns:
-        str: A signed JWT token.
+        str: A signed JWT token containing the subject and expiration claims.
     """
     expire = datetime.now(timezone.utc) + expires_delta
     to_encode = {"exp": expire, "sub": str(subject)}
