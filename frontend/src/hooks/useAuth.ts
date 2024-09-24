@@ -61,6 +61,7 @@ const useAuth = () => {
     })
     localStorage.setItem("access_token", response.access_token)
     OpenAPI.TOKEN = response.access_token
+    OpenAPI.TOKEN = response.access_token
   }
 
   const loginMutation = useMutation({
