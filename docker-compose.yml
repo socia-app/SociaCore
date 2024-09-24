@@ -1,25 +1,10 @@
 services:
-  db:
-    image: postgres:12
-    restart: always
-    volumes:
-      - app-db-data:/var/lib/postgresql/data/pgdata
-    env_file:
-      - .env
-    environment:
-      - PGDATA=/var/lib/postgresql/data/pgdata
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
-      - POSTGRES_USER=${POSTGRES_USER?Variable not set}
-      - POSTGRES_DB=${POSTGRES_DB?Variable not set}
-
   adminer:
     image: adminer
     restart: always
     networks:
       - traefik-public
       - default
-    depends_on:
-      - db
     environment:
       - ADMINER_DESIGN=pepa-linha-dark
     labels:
@@ -41,8 +26,6 @@ services:
     networks:
       - traefik-public
       - default
-    depends_on:
-      - db
     env_file:
       - .env
     environment:
@@ -91,9 +74,6 @@ services:
       # Enable www redirection for HTTP and HTTPS
       - traefik.http.routers.${STACK_NAME?Variable not set}-backend-http.middlewares=https-redirect,${STACK_NAME?Variable not set}-www-redirect
       - traefik.http.routers.${STACK_NAME?Variable not set}-backend-https.middlewares=${STACK_NAME?Variable not set}-www-redirect
-
-volumes:
-  app-db-data:
 
 networks:
   traefik-public:

@@ -113,3 +113,4 @@ class Settings(BaseSettings):
 print("About to initialize Settings...")
 settings = Settings()
 print("Settings initialized.")
+
