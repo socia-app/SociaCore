@@ -142,6 +142,23 @@ class Foodcourt(BaseTimeModel, table=True):
 
 
 class QSR(BaseTimeModel, table=True):
+    menu: List["RestaurantMenu"] = Relationship(back_populates="restaurant")
+    orders: List["RestaurantOrder"] = Relationship(back_populates="restaurant")
+    managing_users: List["UserBusiness"] = Relationship(
+        back_populates="managed_restaurants",
+        link_model=RestaurantUserBusinessLink
+    )
+    qr_codes: List[QRCode] = Relationship(back_populates="restaurant")
+    carousel_posters: Optional[List["CarouselPoster"]] = Relationship(back_populates="restaurant")
+
+class QSRUserBusinessLink(SQLModel, table=True):
+    qsr_id: uuid.UUID = Field(foreign_key="qsr.id", primary_key=True)
+    user_business_id: uuid.UUID = Field(foreign_key="user_business.id", primary_key=True)
+
+class QSRBase(VenueBase):
+    pass
+
+class QSR(QSRBase, table=True):
     __tablename__ = "qsr"
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
@@ -205,6 +222,22 @@ class Restaurant(BaseTimeModel, table=True):
 
 class Nightclub(BaseTimeModel, table=True):
     __tablename__ = "nightclub"
+    managing_users: List["UserBusiness"] = Relationship(
+        back_populates="managed_qsrs",
+        link_model=QSRUserBusinessLink
+    )
+    qr_codes: List[QRCode] = Relationship(back_populates="qsr")
+    carousel_posters: Optional[List["CarouselPoster"]] = Relationship(back_populates="qsr")
+
+class FoodcourtUserBusinessLink(SQLModel, table=True):
+    foodcourt_id: uuid.UUID = Field(foreign_key="foodcourt.id", primary_key=True)
+    user_business_id: uuid.UUID = Field(foreign_key="user_business.id", primary_key=True)
+
+class FoodcourtBase(VenueBase):
+    pass
+
+class Foodcourt(FoodcourtBase, table=True):
+    __tablename__ = "foodcourt"
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     venue_id: uuid.UUID = Field(foreign_key="venue.id", nullable=False, index=True)
