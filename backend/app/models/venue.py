@@ -82,6 +82,7 @@ class Foodcourt(BaseTimeModel, table=True):
     __tablename__ = "foodcourt"
     
     qr_url: Optional[str] = Field(default=None)
+    h3_index: Optional[str] = Field(default=None)
 
 class NightclubUserBusinessLink(SQLModel, table=True):
     nightclub_id: uuid.UUID = Field(foreign_key="nightclub.id", primary_key=True)

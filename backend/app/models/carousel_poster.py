@@ -6,8 +6,6 @@ from datetime import datetime
 class CarouselPosterBase(SQLModel):
     image_url: str = Field(nullable=False)
     deep_link: str = Field(nullable=False)
-    latitude: float = Field(nullable=False)
-    longitude: float = Field(nullable=False)
     expires_at: datetime = Field(nullable=False)
     
     # Foreign keys [Optional]
