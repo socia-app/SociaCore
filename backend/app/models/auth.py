@@ -3,12 +3,13 @@ from datetime import datetime, timezone
 import uuid
 from typing import Optional
 from pydantic import EmailStr
+from app.utils.datetime import get_current_time
 
 class TokenBlacklist(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     jti: str = Field(index=True, unique=True)  # Store JWT ID (jti)
     user_id: uuid.UUID = Field(nullable=False)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at: datetime = Field(default_factory=lambda: get_current_time(), nullable=False)
 
 class OtplessPhoneAuthDetails(SQLModel):
     mode: str
