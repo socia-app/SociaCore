@@ -5,6 +5,7 @@ import jwt
 from fastapi import HTTPException, status
 
 from app.core.config import settings
+from app.utils.datetime import get_current_time
 from app.models.auth import AccessToken, RefreshToken, TokenModel
 
 ALGORITHM = "HS256"
@@ -36,9 +37,9 @@ def get_jwt_payload(token: str) -> TokenModel:
 
 def create_access_token(subject: str, expires_delta: timedelta | None = None) -> AccessToken:
     if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
+        expire = get_current_time() + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = get_current_time() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
     jti = str(uuid.uuid4())
     to_encode = {"exp": expire, "sub": str(subject), "jti": jti}
@@ -54,7 +55,7 @@ def create_access_token(subject: str, expires_delta: timedelta | None = None) ->
     return access_token
 
 def create_refresh_token(subject: str) -> RefreshToken:
-    expire = datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    expire = get_current_time() + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
     jti = str(uuid.uuid4())
     to_encode = {"sub": str(subject), "exp": expire, "jti": jti}
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
