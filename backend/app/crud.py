@@ -1,8 +1,8 @@
-import datetime
 import uuid
 from fastapi import HTTPException
 from sqlmodel import SQLModel, Session, select
 from typing import List, Type
+from app.utils.datetime import get_current_time
 
 # Generic CRUD function to get all records with pagination
 def get_all_records(
@@ -57,8 +57,8 @@ def create_record(
         obj_data = obj_in.model_dump()
         
         # Set `created_at` and `updated_at` timestamps
-        obj_data['created_at'] = datetime.utcnow()
-        obj_data['updated_at'] = datetime.utcnow()
+        obj_data['created_at'] = get_current_time()
+        obj_data['updated_at'] = get_current_time()
         
         # Create the new object
         obj = model(**obj_data)
@@ -94,7 +94,7 @@ def update_record(
             setattr(obj, field, value)
         
         # Set `updated_at` to the current time
-        obj.updated_at = datetime.utcnow()
+        obj.updated_at = get_current_time()
         
         # Commit the changes
         session.add(obj)
@@ -131,7 +131,7 @@ def patch_record(
             setattr(obj, field, value)
         
         # Set `updated_at` to the current time
-        obj.updated_at = datetime.utcnow()
+        obj.updated_at = get_current_time()
         
         # Commit the changes
         session.add(obj)

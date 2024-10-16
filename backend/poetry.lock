@@ -940,6 +940,51 @@ files = [
 ]
 
 [[package]]
+name = "h3"
+version = "4.1.1"
+description = "Uber's hierarchical hexagonal geospatial indexing system"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "h3-4.1.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:f7e39173b8b801b4494a0d4a2ccdadc6525861b60c8ce25adbaba304b09bc497"},
+    {file = "h3-4.1.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:0b4cf814ce17b8c5308a50aa2626331171ce4e93837b0ef5b5a11e830b2bfe87"},
+    {file = "h3-4.1.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:7475a34894a94a9e5af16ced0578eebd49b0cdcae69aa1d8974047fc4985337c"},
+    {file = "h3-4.1.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:fe05271e42b2ec11ce6b13c50f50515d11d2f111f88e1e4d198dc0cb01f9b019"},
+    {file = "h3-4.1.1-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:9625250d23ccc66366632fd3c0c599e040b2a4986bd18a310c2d4ced3670d2dc"},
+    {file = "h3-4.1.1-cp310-cp310-win_amd64.whl", hash = "sha256:6e77f4956c06eabb9f8dc1db196817db7b35c7a229d9d4d109289134743ab9ad"},
+    {file = "h3-4.1.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:3e5aeeae057e5bb20f76be697ab995f9fe694cbca967f4313f361c131e287eca"},
+    {file = "h3-4.1.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:90b6c04e3823ea6371f157ffb805a0b94b23edb76ff81f8f3aa7113cb4fc3082"},
+    {file = "h3-4.1.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f8e94602a7c1a802ad303bd6658ddd1c1676a3978ef8a4b49f11ce519f3650db"},
+    {file = "h3-4.1.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ae406a6b206da7c7f5d48257c4b18bf7457270dbaab0e83b3209b5699ab01012"},
+    {file = "h3-4.1.1-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:c5ffdc6efed445ababbf07d67be6d2176e454af3057c57bc6f6d4a1f006a61cd"},
+    {file = "h3-4.1.1-cp311-cp311-win_amd64.whl", hash = "sha256:622e153e1a2e1f2f2e88e64ff721075ba33f63ce5201cca255c4559ffdab3fd3"},
+    {file = "h3-4.1.1-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:b14b4c70d2e05809638d50fece66a28d9d45fe08951dd460baf91904b1cfb483"},
+    {file = "h3-4.1.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:fad51b264ef6876cbac9ea8da81f775446cd018e488b01745c051d9ebfe3532a"},
+    {file = "h3-4.1.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:aaaefb6bfa2b391ad14944dc1a16df4a0c4030cfed1c0d3c8b0e0c3c6d07cffb"},
+    {file = "h3-4.1.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5c16a23aac9b324abff0aac3876024a7ef1a1c9c452dd8c3a9c127edd22590cc"},
+    {file = "h3-4.1.1-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:cb01d2335c06bb3997e25b9dcdcee8e27cbe29f77ea8a45d8712e2c1df859e47"},
+    {file = "h3-4.1.1-cp312-cp312-win_amd64.whl", hash = "sha256:30cfa94d29564664ae3447bbd01e7613397687fa3d38f8570269017c1b6fa2ae"},
+    {file = "h3-4.1.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:63a39089fa9a49ae79e7f787557db81d891811c752508b3c13107d478122ca72"},
+    {file = "h3-4.1.1-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:0c23122fd784e9daca7a783ec6e27f045efb4927d3ad34f1f7386e2be932f952"},
+    {file = "h3-4.1.1-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c1a4eb717b7e6231a31b9cc42bd1787903fc0f359995e307bf7e6e005669d82a"},
+    {file = "h3-4.1.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:05fb5f4228f2c2df8eb25ff58c285646f9ff0757eeb4244598c5de716a04c5e2"},
+    {file = "h3-4.1.1-cp38-cp38-musllinux_1_1_x86_64.whl", hash = "sha256:d3854a956ea691caaa0acf643cdb76cc208aa7d4dbe7cf4dab95c07f2efcfae4"},
+    {file = "h3-4.1.1-cp38-cp38-win_amd64.whl", hash = "sha256:44f3e37dfd564a42fb60c40d071b3097f97d6aaff7c67d42b0a87ce9eb57e668"},
+    {file = "h3-4.1.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:baa3f120cc8c5502c9bd7804352cd415f182c9e83e43c87484deb85d42a23052"},
+    {file = "h3-4.1.1-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:9aa99d9ad4db4b45690a15fc8479ec6712d79b5617fd56b9d1a799a7a5d864c3"},
+    {file = "h3-4.1.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:560b8fbfe8923a999249d8296be659f3ad818ce82b3d4b38796209ebb73bb516"},
+    {file = "h3-4.1.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0c5c95791f8f4a9dc686c21c1751cd18048eb73dc8f78b47403de054ab9cfc1e"},
+    {file = "h3-4.1.1-cp39-cp39-musllinux_1_1_x86_64.whl", hash = "sha256:22bdcb70daadae676614179be5941faec3b534fd4d8ed62b8b98eca2b0632d66"},
+    {file = "h3-4.1.1-cp39-cp39-win_amd64.whl", hash = "sha256:b961d580715d4e82f496ea64472cf2ff0bcf2f50c8ef702c4fb9353751082479"},
+    {file = "h3-4.1.1.tar.gz", hash = "sha256:94b80249a0c6ae1109defcf2eb8604b00e7be6a7eba2e0e4efd4841f8cc6177a"},
+]
+
+[package.extras]
+all = ["cartopy", "contextily", "flake8", "geodatasets", "geopandas", "geoviews", "jupyter-book", "jupyterlab", "jupyterlab-geojson", "matplotlib", "numpy", "pylint", "pytest", "pytest-cov", "sphinx (>=7.3.3)"]
+numpy = ["numpy"]
+test = ["flake8", "numpy", "pylint", "pytest", "pytest-cov"]
+
+[[package]]
 name = "hiredis"
 version = "3.0.0"
 description = "Python wrapper for hiredis"
@@ -2921,4 +2966,4 @@ email = ["email-validator"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "a16e33dfc99918d37919782659083da940e7b94db8d09af90ad56eca4638e89e"
+content-hash = "e1bfde578f914e36ced16cdb1e58ad11527322da2b9d8859f97a6d674289acbd"

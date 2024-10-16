@@ -3,6 +3,7 @@ from app.schema.venue import FoodcourtCreate, FoodcourtRead, NightclubCreate, Ni
 from app.models.user import UserBusiness, UserPublic
 from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List, Union
+from app.utils import get_h3_index
 
 from app.models.venue import Nightclub, Restaurant, QSR, Foodcourt
 from app.api.deps import SessionDep, get_business_user, get_current_user, get_super_user
@@ -49,7 +50,10 @@ async def create_nightclub(
     session: SessionDep,
     current_user: UserBusiness = Depends(get_business_user)
 ):
-    return create_record(session, Nightclub, nightclub)
+    venue_h3_index = get_h3_index(latitude=nightclub.latitude, longitude=nightclub.longitude)
+    nightclub_obj = Nightclub(**nightclub.model_dump(), h3_index=venue_h3_index)
+
+    return create_record(session, Nightclub, nightclub_obj)
 
 @router.put("/nightclubs/{venue_id}", response_model=Nightclub)
 async def update_nightclub(
@@ -58,6 +62,8 @@ async def update_nightclub(
     session: SessionDep,
     current_user: UserBusiness = Depends(get_business_user)
     ):
+    venue_h3_index = get_h3_index(latitude=updated_nightclub.latitude, longitude=updated_nightclub.longitude)
+    updated_nightclub = Nightclub(**updated_nightclub.model_dump(), h3_index=venue_h3_index)
     return update_record(session, Nightclub, venue_id, updated_nightclub)
 
 @router.delete("/nightclubs/{venue_id}", response_model=None)
@@ -98,6 +104,9 @@ async def create_restaurant(
     session: SessionDep,
     current_user: UserBusiness = Depends(get_business_user)
 ):
+    venue_h3_index = get_h3_index(latitude=restaurant.latitude, longitude=restaurant.longitude)
+    restaurant = Restaurant(**restaurant.model_dump(), h3_index=venue_h3_index)
+
     return create_record(session, Restaurant, restaurant)
 
 @router.put("/restaurants/{venue_id}", response_model=Restaurant)
@@ -107,6 +116,8 @@ async def update_restaurant(
     session: SessionDep,
     current_user: UserBusiness = Depends(get_business_user)
     ):
+    venue_h3_index = get_h3_index(latitude=updated_restaurant.latitude, longitude=updated_restaurant.longitude)
+    updated_restaurant = Restaurant(**updated_restaurant.model_dump(), h3_index=venue_h3_index)
     return update_record(session, Restaurant, venue_id, updated_restaurant)
 
 @router.delete("/restaurants/{venue_id}", response_model=None)
@@ -147,6 +158,8 @@ async def create_qsr(
     session: SessionDep,
     current_user: UserBusiness = Depends(get_business_user)
 ):
+    venue_h3_index = get_h3_index(latitude=qsr.latitude, longitude=qsr.longitude)
+    qsr = QSR(**qsr.model_dump(), h3_index=venue_h3_index)
     return create_record(session, QSR, qsr)
 
 @router.put("/qsrs/{venue_id}", response_model=QSR)
@@ -156,6 +169,8 @@ async def update_qsr(
     session: SessionDep,
     current_user: UserBusiness = Depends(get_business_user)
     ):
+    venue_h3_index = get_h3_index(latitude=updated_qsr.latitude, longitude=updated_qsr.longitude)
+    updated_qsr = QSR(**updated_qsr.model_dump(), h3_index=venue_h3_index)
     return update_record(session, QSR, venue_id, updated_qsr)
 
 @router.delete("/qsrs/{venue_id}", response_model=None)
@@ -196,6 +211,8 @@ async def create_foodcourt(
     session: SessionDep,
     current_user: UserBusiness = Depends(get_business_user)
 ):
+    venue_h3_index = get_h3_index(latitude=foodcourt.latitude, longitude=foodcourt.longitude)
+    foodcourt = Foodcourt(**foodcourt.model_dump(), h3_index=venue_h3_index)
     return create_record(session, Foodcourt, foodcourt)
 
 @router.put("/foodcourts/{venue_id}", response_model=Foodcourt)
@@ -205,6 +222,8 @@ async def update_foodcourt(
     session: SessionDep,
     current_user: UserBusiness = Depends(get_business_user),
     ):
+    venue_h3_index = get_h3_index(latitude=updated_foodcourt.latitude, longitude=updated_foodcourt.longitude)
+    updated_foodcourt = Foodcourt(**updated_foodcourt.model_dump(), h3_index=venue_h3_index)
     return update_record(session, Foodcourt, venue_id, updated_foodcourt)
 
 @router.delete("/foodcourts/{venue_id}", response_model=None)
