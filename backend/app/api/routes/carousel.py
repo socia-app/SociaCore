@@ -9,7 +9,7 @@ from app.schema.carousel_poster import CarouselPosterCreate, CarouselPosterRead
 from app.api.deps import SessionDep
 from app.utils.h3_utils import get_h3_index, get_nearby_h3_indexes, fetch_h3_index
 from app.utils.datetime import get_current_time
-from app.crud import create_record, delete_record, update_record
+from app.utils.crud import create_record, delete_record, update_record
 
 router = APIRouter()
 

@@ -1,5 +1,6 @@
 import uuid
 from app.models.base_model import BaseTimeModel
+from app.utils import get_h3_index
 from app.models.user import UserVenueAssociation
 from app.schema.venue import FoodcourtCreate, FoodcourtRead, NightclubCreate, NightclubRead, QSRCreate, QSRRead, RestaurantCreate, RestaurantRead, VenueCreate, VenueRead
 from sqlmodel import SQLModel, Field, Relationship
@@ -13,6 +14,7 @@ class Venue(BaseTimeModel, table=True):
     address: Optional[str] = Field(default=None)
     latitude: Optional[float] = Field(default=None)
     longitude: Optional[float] = Field(default=None)
+    h3_index: Optional[str] = Field(default=None)
     capacity: Optional[int] = Field(default=None)
     description: Optional[str] = Field(default=None)
     google_rating: Optional[float] = Field(default=None)
@@ -40,6 +42,7 @@ class Venue(BaseTimeModel, table=True):
     
     @classmethod
     def from_create_schema(cls, venue_create: VenueCreate) -> "Venue":
+        venue_h3_index = get_h3_index(latitude=venue_create.latitude, longitude=venue_create.longitude)
         return cls(
             name=venue_create.name,
             capacity=venue_create.capacity,
@@ -53,7 +56,10 @@ class Venue(BaseTimeModel, table=True):
             closing_time=venue_create.closing_time,
             avg_expense_for_two=venue_create.avg_expense_for_two,
             zomato_link=venue_create.zomato_link,
-            swiggy_link=venue_create.swiggy_link
+            swiggy_link=venue_create.swiggy_link,
+            latitude=venue_create.latitude,
+            longitude=venue_create.longitude,
+            h3_index=venue_h3_index
         )
 
     def to_read_schema(self) -> VenueRead:
@@ -63,6 +69,7 @@ class Venue(BaseTimeModel, table=True):
             address=self.address,
             latitude=self.latitude,
             longitude=self.longitude,
+            h3_index=self.h3_index,
             capacity=self.capacity,
             description=self.description,
             google_rating=self.google_rating,
@@ -81,44 +88,6 @@ class Venue(BaseTimeModel, table=True):
 class Foodcourt(BaseTimeModel, table=True):
     __tablename__ = "foodcourt"
     
-    qr_url: Optional[str] = Field(default=None)
-    h3_index: Optional[str] = Field(default=None)
-
-class NightclubUserBusinessLink(SQLModel, table=True):
-    nightclub_id: uuid.UUID = Field(foreign_key="nightclub.id", primary_key=True)
-    user_business_id: uuid.UUID = Field(foreign_key="user_business.id", primary_key=True)
-
-class NightclubBase(VenueBase):
-    pass
-
-class Nightclub(NightclubBase, table=True):
-    __tablename__ = "nightclub"
-
-    id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
-    # Relationships
-    events: List["Event"] = Relationship(back_populates="nightclub")
-    club_visits: List["ClubVisit"] = Relationship(back_populates="nightclub")
-    menu: List["NightclubMenu"] = Relationship(back_populates="nightclub")
-    orders: List["NightclubOrder"] = Relationship(back_populates="nightclub")
-    pickup_locations: List["PickupLocation"] = Relationship(back_populates="nightclub")
-    group : List["Group"] = Relationship(back_populates="nightclubs")
-    managing_users: List["UserBusiness"] = Relationship(
-        back_populates="managed_nightclubs",
-        link_model=NightclubUserBusinessLink
-    )
-    qr_codes: List[QRCode] = Relationship(back_populates="nightclub")
-    carousel_posters: Optional[List["CarouselPoster"]] = Relationship(back_populates="nightclub")
-
-class RestaurantUserBusinessLink(SQLModel, table=True):
-    restaurant_id: uuid.UUID = Field(foreign_key="restaurant.id", primary_key=True)
-    user_business_id: uuid.UUID = Field(foreign_key="user_business.id", primary_key=True)
-
-class RestaurantBase(VenueBase):
-    pass
-
-class Restaurant(RestaurantBase, table=True):
-    __tablename__ = "restaurant"
-
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     total_qsrs: Optional[int] = Field(default=None)  # Example specific field for foodcourt
     seating_capacity: Optional[int] = Field(default=None)  # Specific to foodcourts
@@ -127,6 +96,7 @@ class Restaurant(RestaurantBase, table=True):
     # Relationships
     venue: Venue = Relationship(back_populates="foodcourt")
     qsrs: List["QSR"] = Relationship(back_populates="foodcourt")
+    carousel_posters: Optional[List["CarouselPoster"]] = Relationship(back_populates="foodcourt")
 
     @classmethod
     def from_create_schema(cls, venue_id: uuid ,foodcourt_create: FoodcourtCreate) -> "Foodcourt":
@@ -147,23 +117,6 @@ class Restaurant(RestaurantBase, table=True):
         )
 
 class QSR(BaseTimeModel, table=True):
-    menu: List["RestaurantMenu"] = Relationship(back_populates="restaurant")
-    orders: List["RestaurantOrder"] = Relationship(back_populates="restaurant")
-    managing_users: List["UserBusiness"] = Relationship(
-        back_populates="managed_restaurants",
-        link_model=RestaurantUserBusinessLink
-    )
-    qr_codes: List[QRCode] = Relationship(back_populates="restaurant")
-    carousel_posters: Optional[List["CarouselPoster"]] = Relationship(back_populates="restaurant")
-
-class QSRUserBusinessLink(SQLModel, table=True):
-    qsr_id: uuid.UUID = Field(foreign_key="qsr.id", primary_key=True)
-    user_business_id: uuid.UUID = Field(foreign_key="user_business.id", primary_key=True)
-
-class QSRBase(VenueBase):
-    pass
-
-class QSR(QSRBase, table=True):
     __tablename__ = "qsr"
     
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
@@ -175,6 +128,7 @@ class QSR(QSRBase, table=True):
     venue: Venue = Relationship(back_populates="qsr")
     foodcourt: Optional[Foodcourt] = Relationship(back_populates="qsrs")
     orders: List["QSROrder"] = Relationship(back_populates="qsr")
+    carousel_posters: Optional[List["CarouselPoster"]] = Relationship(back_populates="qsr")
     
     @classmethod
     def from_create_schema(cls, venue_id: uuid, qsr_create: QSRCreate) -> "QSR":
@@ -201,6 +155,7 @@ class Restaurant(BaseTimeModel, table=True):
     venue: Venue = Relationship(back_populates="restaurant")
     cuisine_type: Optional[str] = Field(default=None)  # Example specific field for restaurant
     orders: List["RestaurantOrder"] = Relationship(back_populates="restaurant")
+    carousel_posters: Optional[List["CarouselPoster"]] = Relationship(back_populates="restaurant")
 
     @classmethod
     def from_create_schema(cls,venue_id, restaurant_create: RestaurantCreate) -> "Restaurant":
@@ -219,22 +174,6 @@ class Restaurant(BaseTimeModel, table=True):
 
 class Nightclub(BaseTimeModel, table=True):
     __tablename__ = "nightclub"
-    managing_users: List["UserBusiness"] = Relationship(
-        back_populates="managed_qsrs",
-        link_model=QSRUserBusinessLink
-    )
-    qr_codes: List[QRCode] = Relationship(back_populates="qsr")
-    carousel_posters: Optional[List["CarouselPoster"]] = Relationship(back_populates="qsr")
-
-class FoodcourtUserBusinessLink(SQLModel, table=True):
-    foodcourt_id: uuid.UUID = Field(foreign_key="foodcourt.id", primary_key=True)
-    user_business_id: uuid.UUID = Field(foreign_key="user_business.id", primary_key=True)
-
-class FoodcourtBase(VenueBase):
-    pass
-
-class Foodcourt(FoodcourtBase, table=True):
-    __tablename__ = "foodcourt"
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     venue_id: uuid.UUID = Field(foreign_key="venue.id", nullable=False, index=True)
@@ -245,6 +184,7 @@ class Foodcourt(FoodcourtBase, table=True):
     orders: List["NightclubOrder"] = Relationship(back_populates="nightclub")
     group: List["Group"] = Relationship(back_populates="nightclubs")
     venue: Venue = Relationship(back_populates="nightclub")
+    carousel_posters: Optional[List["CarouselPoster"]] = Relationship(back_populates="nightclub")
 
 
     @classmethod
@@ -261,10 +201,3 @@ class Foodcourt(FoodcourtBase, table=True):
             id=self.id,
             venue=venue_read,
         )
-    qsrs: List["QSR"] = Relationship(back_populates="foodcourt")
-    managing_users: List["UserBusiness"] = Relationship(
-        back_populates="managed_foodcourts",
-        link_model=FoodcourtUserBusinessLink
-    )
-    qr_codes: List[QRCode] = Relationship(back_populates="foodcourt")
-    carousel_posters: Optional[List["CarouselPoster"]] = Relationship(back_populates="foodcourt")

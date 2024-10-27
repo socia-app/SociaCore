@@ -7,7 +7,7 @@ from sqlmodel import Session,select
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 from app.api.deps import SessionDep, get_current_user
-from app.util import (
+from app.utils.crud import (
     get_record_by_id,
     create_record,
     update_record,

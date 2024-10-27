@@ -4,7 +4,7 @@ from math import sqrt
 from sqlmodel import SQLModel, Session
 from typing import Type
 import uuid
-from app.crud import get_record_by_id
+from .crud import get_record_by_id
 
 def get_h3_index(latitude: float, longitude: float, resolution: int = 9) -> str:
     return h3.latlng_to_cell(latitude, longitude, resolution)
