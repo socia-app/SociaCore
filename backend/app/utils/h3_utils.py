@@ -4,6 +4,7 @@ from math import sqrt
 from sqlmodel import SQLModel, Session
 from typing import Type
 import uuid
+# from app.models.venue import Venue
 from .crud import get_record_by_id
 
 
@@ -31,7 +32,8 @@ def get_nearby_h3_indexes(origin, radius_km):
 
 
 
-def fetch_h3_index(session: Session, model: Type[SQLModel], id: uuid.UUID):
-    record = get_record_by_id(session, model, id).dict()
+def fetch_h3_index(db: Session, model: Type[SQLModel], id: uuid.UUID):
+    record = get_record_by_id(db, model, id)
+    venue_details = record.venue.dict()
 
-    return record.get("h3_index", None)
+    return venue_details.get("h3_index", None)

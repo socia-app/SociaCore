@@ -24,7 +24,8 @@ async def get_carousel_posters(
     radius: int = 3000,
     current_user: UserPublic = Depends(get_current_user),  # noqa: ARG001
 ):
-    user_h3_index = get_h3_index(latitude=latitude, longitude=longitude)
+    try:
+        user_h3_index = get_h3_index(latitude=latitude, longitude=longitude)
 
     distance_in_km = radius / 1000
     k_ring_size = int(distance_in_km / 1.2)
@@ -42,6 +43,12 @@ async def get_carousel_posters(
     )
 
     return [poster.to_read_schema() for poster in posters]
+
+
+    except Exception as e:
+        # Rollback the session in case of any error
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))  # Respond with a 500 error
 
 
 @router.post("/poster/", response_model=CarouselPosterRead)
