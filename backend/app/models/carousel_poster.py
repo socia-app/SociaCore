@@ -1,5 +1,8 @@
 import uuid
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import SQLModel, Field, Relationship, Session
+from app.schema.carousel_poster import CarouselPosterCreate, CarouselPosterRead
+from app.models.venue import Nightclub, Restaurant, Foodcourt, QSR
+from app.utils.h3_utils import fetch_h3_index
 from typing import Optional
 from datetime import datetime
 
@@ -26,3 +29,41 @@ class CarouselPoster(CarouselPosterBase, table=True):
     foodcourt: Optional["Foodcourt"] = Relationship(back_populates="carousel_posters")
     qsr: Optional["QSR"] = Relationship(back_populates="carousel_posters")
     restaurant: Optional["Restaurant"] = Relationship(back_populates="carousel_posters")
+
+    @classmethod
+    def from_create_schema(cls, db: Session, poster_create: CarouselPosterCreate) -> "CarouselPoster":
+        h3_index = None
+        if poster_create.nightclub_id:
+            h3_index = fetch_h3_index(db, Nightclub, poster_create.nightclub_id)
+        elif poster_create.restaurant_id:
+            h3_index = fetch_h3_index(db, Restaurant, poster_create.restaurant_id)
+        elif poster_create.foodcourt_id:
+            h3_index = fetch_h3_index(db, Foodcourt, poster_create.foodcourt_id)
+        else:
+            h3_index = fetch_h3_index(db, QSR, poster_create.qsr_id)
+
+        return cls(
+            image_url=poster_create.image_url,
+            deep_link=poster_create.deep_link,
+            expires_at=poster_create.expires_at,
+            event_id=poster_create.event_id,
+            nightclub_id=poster_create.nightclub_id,
+            foodcourt_id=poster_create.foodcourt_id,
+            qsr_id=poster_create.qsr_id,
+            restaurant_id=poster_create.restaurant_id,
+            h3_index=h3_index
+        )
+
+    def to_read_schema(self) -> CarouselPosterRead:
+        return CarouselPosterRead(
+            id=self.id,
+            image_url=self.image_url,
+            deep_link=self.deep_link,
+            expires_at=self.expires_at,
+            event_id=self.event_id,
+            nightclub_id=self.nightclub_id,
+            foodcourt_id=self.foodcourt_id,
+            qsr_id=self.qsr_id,
+            restaurant_id=self.restaurant_id,
+            h3_index=self.h3_index
+        )

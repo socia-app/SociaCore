@@ -30,12 +30,10 @@ def create_foodcourt(foodcourt: FoodcourtCreate, db: Session = Depends(get_db),
     try:
         # Check if the venue exists
         venue_instance = Venue.from_create_schema(foodcourt.venue)
-        print(venue_instance.model_dump())
         create_record(db, venue_instance)  # Persist the new venue
         # Use the newly created venue instance
         foodcourt_instance = Foodcourt.from_create_schema(venue_instance.id, foodcourt)
         # Create the new Foodcourt record in the database
-        print("foodcour", foodcourt_instance.model_dump())
         create_record(db, foodcourt_instance)
         association = UserVenueAssociation(
             user_id=current_user.id,
