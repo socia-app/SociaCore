@@ -54,7 +54,6 @@ class NightclubCreate(BaseModel):
     venue: VenueCreate
     age_limit: int | None = None
 
-class NightclubCreate(VenueBase):
     class Config:
         from_attributes = True
 
@@ -86,9 +85,6 @@ class FoodcourtRead(BaseModel):
     venue: VenueRead
     qsrs: list["QSRRead"] = []  # list of QSRs in the foodcourt
 
-class QSRRead(VenueBase):
-    id: Optional[uuid.UUID]
-    h3_index: Optional[str]
     class Config:
         from_attributes = True
 

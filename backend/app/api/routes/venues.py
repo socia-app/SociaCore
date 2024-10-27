@@ -22,16 +22,6 @@ from app.schema.venue import (
 # Assuming you have a dependency to get the database session
 from app.util import (
     create_record,
-import uuid
-from app.schema.venue import FoodcourtCreate, FoodcourtRead, NightclubCreate, NightclubRead, QSRCreate, QSRRead, RestaurantCreate, RestaurantRead
-from app.models.user import UserBusiness, UserPublic
-from fastapi import APIRouter, Depends, HTTPException, Query
-from typing import List, Union
-from app.utils import get_h3_index
-
-from app.models.venue import Nightclub, Restaurant, QSR, Foodcourt
-from app.api.deps import SessionDep, get_business_user, get_current_user, get_super_user
-from app.crud import (
     get_all_records,
 )
 
@@ -49,10 +39,12 @@ def create_foodcourt(
     try:
         # Check if the venue exists
         venue_instance = Venue.from_create_schema(foodcourt.venue)
+        print(venue_instance.model_dump())
         create_record(db, venue_instance)  # Persist the new venue
         # Use the newly created venue instance
         foodcourt_instance = Foodcourt.from_create_schema(venue_instance.id, foodcourt)
         # Create the new Foodcourt record in the database
+        print("foodcour", foodcourt_instance.model_dump())
         create_record(db, foodcourt_instance)
         association = UserVenueAssociation(
             user_id=current_user.id, venue_id=venue_instance.id
