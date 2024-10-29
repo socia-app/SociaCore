@@ -1,5 +1,6 @@
 import uuid
 from datetime import time
+from enum import Enum
 
 from pydantic import BaseModel
 
@@ -48,6 +49,17 @@ class RestaurantCreate(BaseModel):
     class Config:
         from_attributes = True
 
+class Platform(Enum):
+    ZOMATO = "zomato"
+    SWIGGY = "swiggy"
+    UBER_EATS = "uber_eats" 
+
+class RestaurantCreateFromExisting(BaseModel):
+    url: str
+    platform: Platform
+    
+    class Config:
+        from_attributes = True
 
 # Nightclub Schemas
 class NightclubCreate(BaseModel):
