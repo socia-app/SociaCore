@@ -7,6 +7,7 @@ from app.schema.venue import (
     FoodcourtCreate,
     QSRCreate,
     RestaurantCreate,
+    RestaurantCreateFromExisting,
     NightclubCreate,
     FoodcourtRead,
     QSRRead,
@@ -14,6 +15,7 @@ from app.schema.venue import (
     NightclubRead,
     VenueListResponse,
 )
+from app.utils.scrap_restaurant import get_restaurant_details
 from app.api.deps import get_business_user, get_db  # Assuming you have a dependency to get the database session
 from app.utils.crud import (
     create_record,
@@ -100,6 +102,27 @@ def create_restaurant(restaurant: RestaurantCreate, db: Session = Depends(get_db
         )
         create_record(db, association)
         return restaurant_instance.to_read_schema()
+    
+    except Exception as e:
+        # Rollback the session in case of any error
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))  # Respond with a 500 error
+
+@router.post("/restaurants/existing", response_model=RestaurantRead)
+async def create_restaurant(restaurant: RestaurantCreateFromExisting, db: Session = Depends(get_db),
+                      current_user: UserBusiness = Depends(get_business_user)):
+    print("Restaurant Exisisting add request", restaurant.url)
+    try:
+        # Check if the venue exists
+        restaurant_data = await get_restaurant_details(restaurant.url)
+        # create_record(db, venue_instance)  # Persist the new venue
+        # # Use the newly created venue instance
+        # restaurant_instance = Restaurant.from_create_schema(venue_instance.id, restaurant)
+        # # Create the new Foodcourt record in the database
+        # create_record(db, restaurant_instance)
+        # return restaurant_instance.to_read_schema()
+        print(restaurant_data)
+        return restaurant_data
     
     except Exception as e:
         # Rollback the session in case of any error
