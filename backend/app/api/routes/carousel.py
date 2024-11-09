@@ -10,7 +10,7 @@ from app.models.event import Event
 from app.models.user import UserBusiness, UserPublic
 from app.models.venue import Venue
 from app.schema.carousel_poster import CarouselPosterCreate, CarouselPosterRead
-from app.util import check_user_permission, create_record, get_record_by_id
+from app.utils.crud import check_user_permission, create_record, get_record_by_id
 from app.utils import get_h3_index
 
 router = APIRouter()
@@ -24,24 +24,30 @@ async def get_carousel_posters(
     radius: int = 3000,
     current_user: UserPublic = Depends(get_current_user),  # noqa: ARG001
 ):
-    user_h3_index = get_h3_index(latitude=latitude, longitude=longitude)
+    try:
+        user_h3_index = get_h3_index(latitude=latitude, longitude=longitude)
 
-    distance_in_km = radius / 1000
-    k_ring_size = int(distance_in_km / 1.2)
+        distance_in_km = radius / 1000
+        k_ring_size = int(distance_in_km / 1.2)
 
-    nearby_h3_indexes = h3.k_ring(user_h3_index, k_ring_size)
+        nearby_h3_indexes = h3.k_ring(user_h3_index, k_ring_size)
 
-    posters = (
-        session.execute(
-            select(CarouselPoster)
-            .where(CarouselPoster.h3_index.in_(nearby_h3_indexes))
-            .where(CarouselPoster.expires_at > datetime.now())
+        posters = (
+            session.execute(
+                select(CarouselPoster)
+                .where(CarouselPoster.h3_index.in_(nearby_h3_indexes))
+                .where(CarouselPoster.expires_at > datetime.now())
+            )
+            .scalars()
+            .all()
         )
-        .scalars()
-        .all()
-    )
 
-    return [poster.to_read_schema() for poster in posters]
+        return [poster.to_read_schema() for poster in posters]
+
+
+    except Exception as e:
+        # Rollback the session in case of any error
+        raise HTTPException(status_code=500, detail=str(e))  # Respond with a 500 error
 
 
 @router.post("/poster/", response_model=CarouselPosterRead)

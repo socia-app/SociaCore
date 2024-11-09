@@ -108,7 +108,7 @@ async def verify_token(request: OtplessToken, session: SessionDep):
         return UserAuthResponse(
             access_token=access_token,
             refresh_token=refresh_token,
-            issued_at=datetime.now(timezone.utc)
+            issued_at=get_current_time()
         )
 
     except Exception as e:
@@ -143,7 +143,7 @@ async def refresh_token(request: RefreshTokenPayload, session: SessionDep):
             raise HTTPException(status_code=401, detail="Invalid refresh token")
 
         # Check if the token has expired
-        current_time = datetime.now(timezone.utc)
+        current_time = get_current_time()
         if payload.exp and datetime.fromtimestamp(payload.exp, timezone.utc) < current_time:
             raise HTTPException(status_code=401, detail="Refresh token expired")
 
