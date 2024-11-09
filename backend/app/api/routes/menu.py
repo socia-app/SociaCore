@@ -21,7 +21,7 @@ from app.schema.menu import (
     MenuSubCategoryUpdate,
     MenuUpdate,
 )
-from app.util import (
+from app.utils.crud import (
     check_user_permission,
     create_record,
     delete_record,

@@ -8,24 +8,25 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
-
+import os
 # Function to set up Selenium asynchronously and interact with the webpage
 
 async def setup_selenium(url):
     print("Setting up selenium driver for ", url)
+    selenium_url = "http://172.18.0.2:4444/wd/hub"
     # Configure Selenium options (headless)
     options = Options()
     options.add_argument("--no-sandbox")
     options.add_argument("--headless")
-    options.add_argument("--disable-software-rasterizer")
-    options.add_argument("--disable-gpu")
+    # options.add_argument("--disable-software-rasterizer")
+    # options.add_argument("--disable-gpu")
     options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--window-size=1920,1080")
-    options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+    # options.add_argument("--window-size=1920,1080")
+    # options.add_argument("--disable-blink-features=AutomationControlled")
+    # options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
 
     try:
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        driver = webdriver.Remote(command_executor=selenium_url, options=options)
         driver.get(url)
 
         read_more_click_script = """

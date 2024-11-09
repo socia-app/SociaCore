@@ -35,6 +35,14 @@ services:
       - traefik.http.routers.${STACK_NAME?Variable not set}-adminer-https.tls.certresolver=le
       - traefik.http.services.${STACK_NAME?Variable not set}-adminer.loadbalancer.server.port=8080
 
+  selenium:
+    image: selenium/standalone-chrome:latest
+    platform: linux/amd64
+    container_name: selenium_chrome
+    ports:
+      - "4444:4444"  # Expose the default Selenium port
+      - "7900:7900"  
+
   backend:
     image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
     # shm_size: 2gb
@@ -44,6 +52,7 @@ services:
       - default
     depends_on:
       - db
+      - selenium
     env_file:
       - .env
     environment:
