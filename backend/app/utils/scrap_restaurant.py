@@ -15,19 +15,23 @@ async def setup_selenium(url):
     print("Setting up selenium driver for ", url)
     # Configure Selenium options (headless)
     options = Options()
-    options.add_argument("--no-sandbox")
-    options.add_argument("--headless")
-    options.add_argument("--disable-software-rasterizer")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--window-size=1920,1080")
-    options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+    options.add_argument("--disable-gpu") 
+    options.add_argument("--disable-extensions") 
+    # options.add_argument('--disable-http2')
+    options.add_argument("--disable-infobars") 
+    options.add_argument("--start-maximized") 
+    options.add_argument("--disable-notifications") 
+    options.add_argument('--headless') 
+    options.add_argument('--no-sandbox') 
+    options.add_argument('--disable-dev-shm-usage') 
+
 
     try:
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        print("Driver setup")
         driver.get(url)
-
+        await asyncio.sleep(3)
+        print("Fetched the data")
         read_more_click_script = """
         const buttons = document.getElementsByClassName("sc-ya2zuu-0 SWRrQ");
         for(const button of buttons) {
@@ -53,8 +57,9 @@ async def setup_selenium(url):
         """
         driver.execute_script(scroll_script)
         
+        print("Executed all the scripts")
         # Wait for specific elements to load
-        WebDriverWait(driver, 20).until(EC.presence_of_all_elements_located((By.TAG_NAME, 'img')))
+        WebDriverWait(driver, 30).until(EC.presence_of_all_elements_located((By.TAG_NAME, 'img')))
         driver.implicitly_wait(2)
 
         return driver
@@ -71,7 +76,12 @@ async def scrape_restaurant_data(url):
         "location": "",
         "menu": []
     }
-    print("Extracting the data")
+    print("Extracting the data", driver.page_source)
+    page_source = driver.page_source
+    file_path = "page_source.html"
+    with open(file_path, "w", encoding="utf-8") as file:
+        file.write(page_source)
+    print(f"Page source saved to {file_path}")
     # Extract name
     name_elem = driver.find_element(By.CSS_SELECTOR, 'h1.sc-7kepeu-0.sc-iSDuPN.fwzNdh')  # Update with actual class name
     restaurant_data["name"] = name_elem.text.strip() if name_elem else ""
@@ -138,7 +148,8 @@ async def get_restaurant_coordinates(url):
         return coordinates
     
 # Main function to scrape restaurant data and coordinates asynchronously
-async def get_restaurant_details(base_url):
+async def get_restaurant_details1(base_url):
+    print("get_restaurant_details1 IS RUNNING") 
     order_url = f"{base_url}/order"
     restaurant_data = await scrape_restaurant_data(order_url)
     print("Restaurnt data extracted")
@@ -150,3 +161,40 @@ async def get_restaurant_details(base_url):
     # print(restaurant_data)
 
     return restaurant_data
+
+async def get_restaurant_details2(base_url):
+    option = Options() 
+
+    option.add_argument("--disable-gpu") 
+    option.add_argument("--disable-extensions") 
+    option.add_argument("--disable-infobars") 
+    option.add_argument("--start-maximized") 
+    option.add_argument("--disable-notifications") 
+    option.add_argument('--headless') 
+    option.add_argument('--no-sandbox') 
+    option.add_argument('--disable-dev-shm-usage') 
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=option) 
+
+    # Navigate to the news website 
+    driver.get("https://www.nytimes.com/") 
+
+    # Scrape the headlines 
+    headlines = driver.find_elements(By.CLASS_NAME, "indicate-hover") 
+    print("get_restaurant_details2 IS RUNNING") 
+    result = ""
+    for headline in headlines: 
+        result += headline.text
+        print(headline.text) 
+    print("i am closed") 
+    # Close the browser 
+    driver.quit()
+
+    return {
+        "result": result
+    }
+
+async def get_restaurant_details(base_url, fun_name="get_restaurant_details1"):
+    if fun_name == "get_restaurant_details1":
+        return await get_restaurant_details1(base_url)
+    
+    return await get_restaurant_details2(base_url)

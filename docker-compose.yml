@@ -37,7 +37,7 @@ services:
 
   backend:
     image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
-    # shm_size: 2gb
+    shm_size: 2gb
     restart: always
     networks:
       - traefik-public

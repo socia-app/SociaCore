@@ -17,18 +17,23 @@ RUN bash -c "if [ $INSTALL_DEV == 'true' ] ; then poetry install --no-root ; els
 
 ENV PYTHONPATH=/app
 
-# Install Chromium and Chromedriver
-RUN apt-get update && apt-get install -y wget unzip && \
-    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+# Install Chromium, ChromeDriver, and dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    unzip \
+    gnupg \
+    && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     apt-get install -y ./google-chrome-stable_current_amd64.deb && \
     rm google-chrome-stable_current_amd64.deb && \
+    CHROMEDRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE) && \
+    wget -O /tmp/chromedriver.zip "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip" && \
+    unzip /tmp/chromedriver.zip -d /usr/local/bin/ && \
+    rm /tmp/chromedriver.zip && \
     apt-get clean
 
-# # Environment variables for Selenium to locate the Chromium and Chromedriver paths
-# ENV CHROME_BIN=/usr/bin/chromium
-# ENV CHROMEDRIVER_PATH=/usr/bin/chromedriver
-
-# RUN mkdir -p /dev/shm && mount -o size=2G,mode=1777 -t tmpfs none /dev/shm
+# Set environment variables for Selenium to locate Chrome and ChromeDriver
+ENV CHROME_BIN=/usr/bin/google-chrome
+ENV CHROMEDRIVER_PATH=/usr/local/bin/chromedriver
 
 # Copy scripts, alembic.ini, and app files
 COPY ./scripts/ /app/
@@ -37,4 +42,5 @@ COPY ./prestart.sh /app/
 COPY ./tests-start.sh /app/
 COPY ./app /app/app
 
+# Show installed packages for verification
 RUN poetry run pip list

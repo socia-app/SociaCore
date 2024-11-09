@@ -19,7 +19,7 @@ from app.schema.user import (
     UserPublicRead,
     UserPublicUpdate,
 )
-from app.util import (
+from app.utils.crud import (
     create_record,
     delete_record,
     get_all_records,

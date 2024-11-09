@@ -128,8 +128,8 @@ def create_restaurant(
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))  # Respond with a 500 error
 
-@router.post("/restaurants/existing", response_model=RestaurantRead)
-async def create_restaurant(restaurant: RestaurantCreateFromExisting, db: Session = Depends(get_db),
+@router.post("/restaurants/existing")
+async def create_existing_restaurant(restaurant: RestaurantCreateFromExisting, db: Session = Depends(get_db),
                       current_user: UserBusiness = Depends(get_business_user)):
     print("Restaurant Exisisting add request", restaurant.url)
     try:
