@@ -69,6 +69,7 @@ class Venue(BaseTimeModel, table=True):
 
     @classmethod
     def from_create_schema(cls, venue_create: VenueCreate) -> "Venue":
+        venue_h3_index = get_h3_index(latitude=venue_create.latitude, longitude=venue_create.longitude)
         return cls(
             name=venue_create.name,
             capacity=venue_create.capacity,
@@ -92,6 +93,7 @@ class Venue(BaseTimeModel, table=True):
             address=self.address,
             latitude=self.latitude,
             longitude=self.longitude,
+            h3_index=self.h3_index,
             capacity=self.capacity,
             description=self.description,
             google_rating=self.google_rating,

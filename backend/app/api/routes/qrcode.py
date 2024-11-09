@@ -16,7 +16,7 @@ from app.schema.qrcode import (
 )
 
 # Ensure you have these imports for your schemas
-from app.util import (
+from app.utils.crud import (
     check_user_permission,
     delete_record,
     get_record_by_id,
