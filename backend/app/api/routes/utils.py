@@ -27,13 +27,8 @@ def transform_restaurant_data(zomato_data):
         }
         
         # Process each menu category
-
         categories = []
         for menu_entry in menus:
-
-
-
-
             menu = menu_entry.get('menu', {})
             subcategories = menu.get('categories', [])
             
@@ -76,7 +71,8 @@ def transform_restaurant_data(zomato_data):
                         "price": item.get('price', 0),
                         "is_veg": any(tag == "pure_veg" for tag in item.get('tag_slugs', [])),
                         "spice_level": determine_spice_level(item),
-                        "image_url": extract_image_url(item)
+                        "image_url": extract_image_url(item),
+                        "variants": handle_item_variants(item)  # Added variants using the new function
                     }
                     
                     # Determine which subcategory this item belongs to
@@ -179,6 +175,34 @@ def extract_image_url(item):
     
     # If no image found, return None
     return None
+
+def handle_item_variants(item):
+    """
+    Process item variants from Zomato data.
+    
+    Args:
+        item (dict): The menu item data
+        
+    Returns:
+        list: A list of variant objects with name, price, and is_default flag
+    """
+    menu_item_variants = []
+    
+    if item.get('variantsV2'):
+        for variant in item['variantsV2']:
+            menu_item_variants.append({
+                'name': variant.get('variantName', ''),
+                'price': float(variant.get('price', 0)) / 100,
+                'is_default': variant.get('isDefault', False)
+            })
+    else:
+        menu_item_variants.append({
+            'name': 'Regular',
+            'price': float(item.get('defaultPrice', 0)) / 100,
+            'is_default': True
+        })
+    
+    return menu_item_variants
 
 # Example usage:
 # transformed_data = transform_restaurant_data(zomato_data)
