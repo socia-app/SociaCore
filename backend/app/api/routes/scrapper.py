@@ -15,7 +15,7 @@ from app.schema.menu import (
     MenuSubCategoryCreate,
     MenuItemCreate
 )
-from app.api.routes.utils import transform_restaurant_data
+from app.api.routes.utils import transform_restaurant_data, handle_item_variants
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -60,6 +60,7 @@ def parse_zomato_page(html_content: str) -> dict:
 
 def extract_menu_data(json_data: dict) -> dict:
     try:
+       
         with open('data.json', 'w') as f:
             json.dump(json_data, f, indent=4)
         restaurant_data = json_data.get('pages', {}).get('current', {})
@@ -72,7 +73,6 @@ def extract_menu_data(json_data: dict) -> dict:
         res_info = restaurant_details[restaurant_id].get('sections', {})
         basic_info = res_info.get('SECTION_BASIC_INFO', {})
         menu_widget = res_info.get('SECTION_MENU_WIDGET', {})
-
 
         # Validate required name field
         if not basic_info.get('name'):
@@ -93,7 +93,6 @@ def extract_menu_data(json_data: dict) -> dict:
                 'avg_cost_for_two': basic_info.get('average_cost_for_two', 0)
             }
         }
-
 
         menu_categories = []
         print("Catorgies", menu_widget.get('menu', {}).get('categories', []))
@@ -122,23 +121,8 @@ def extract_menu_data(json_data: dict) -> dict:
                     'description': item.get('desc', ''),
                     'is_veg': item.get('isVeg', True),
                     'image_url': item.get('itemImage', ''),
-                    'variants': []
+                    'variants': handle_item_variants(item)  # Use the utility function here
                 }
-                
-                # Handle variants
-                if item.get('variantsV2'):
-                    for variant in item['variantsV2']:
-                        menu_item['variants'].append({
-                            'name': variant.get('variantName', ''),
-                            'price': float(variant.get('price', 0)) / 100,
-                            'is_default': variant.get('isDefault', False)
-                        })
-                else:
-                    menu_item['variants'].append({
-                        'name': 'Regular',
-                        'price': float(item.get('defaultPrice', 0)) / 100,
-                        'is_default': True
-                    })
                 
                 subcategories[subcategory_name]['items'].append(menu_item)
             
@@ -163,7 +147,6 @@ def extract_menu_data(json_data: dict) -> dict:
             status_code=500,
             detail=f"Failed to extract menu data: {str(e)}"
         )
-
 
 async def create_restaurant(client: httpx.AsyncClient, restaurant_data: RestaurantCreate):
     response = await client.post("/venue/restaurants/", json=restaurant_data.dict())
