@@ -26,6 +26,14 @@ class ZomatoUrl(BaseModel):
     url: HttpUrl
 
 def fetch_zomato_data(url: str) -> str:
+   
+    if not url.endswith('/order'):
+       
+        if url.endswith('/'):
+            url = url[:-1]
+        url = f"{url}/order"
+    
+    logger.info(f"Modified URL for scraping: {url}")
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
