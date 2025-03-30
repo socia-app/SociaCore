@@ -202,7 +202,8 @@ async def scrape_and_create_menu(
                 name=scraped_data['restaurant_info']['name'],
                 description="Restaurant imported from Zomato",
                 avg_expense_for_two=scraped_data['restaurant_info']['avg_cost_for_two'],
-                zomato_link=str(request.url)
+                zomato_link=str(request.url),
+                owner_id=current_user.id
             )
 
             restaurant_data = RestaurantCreate(
