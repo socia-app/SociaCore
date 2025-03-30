@@ -19,6 +19,7 @@ class VenueCreate(BaseModel):
     zomato_link: str | None = None
     swiggy_link: str | None = None
     google_map_link: str | None = None
+    owner_id: uuid.UUID | None = None 
 
 
 class FoodcourtCreate(BaseModel):

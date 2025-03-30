@@ -53,7 +53,7 @@ class Venue(BaseTimeModel, table=True):
     avg_expense_for_two: float | None = Field(default=None)
     zomato_link: str | None = Field(default=None)
     swiggy_link: str | None = Field(default=None)
-
+    owner_id: uuid.UUID | None = Field(default=None)
     managing_users: list["UserVenueAssociation"] = Relationship(back_populates="venue")
     qrcode: list["QRCode"] = Relationship(back_populates="venue")
     menu: list["Menu"] = Relationship(back_populates="venue")
@@ -83,6 +83,7 @@ class Venue(BaseTimeModel, table=True):
             avg_expense_for_two=venue_create.avg_expense_for_two,
             zomato_link=venue_create.zomato_link,
             swiggy_link=venue_create.swiggy_link,
+            owner_id=venue_create.owner_id,
         )
 
     def to_read_schema(self) -> VenueRead:
