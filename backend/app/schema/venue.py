@@ -1,7 +1,7 @@
 import uuid
 from datetime import time
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, validator
 
 
 # Venue base details (composition)
@@ -19,6 +19,7 @@ class VenueCreate(BaseModel):
     zomato_link: str | None = None
     swiggy_link: str | None = None
     google_map_link: str | None = None
+    owner_id: uuid.UUID | None = None 
 
 
 class FoodcourtCreate(BaseModel):
@@ -41,8 +42,17 @@ class QSRCreate(BaseModel):
 
 # Restaurant Schemas
 class RestaurantCreate(BaseModel):
-    cuisine_type: str | None = None
+    cuisine_type: str | None = Field(
+        default=None,
+        description="Comma-separated list of cuisine types"
+    )
     venue: VenueCreate
+
+    @validator('cuisine_type', pre=True)
+    def format_cuisine_type(cls, v):
+        if isinstance(v, list):
+            return ', '.join(v)  # Convert list to comma-separated string
+        return v
 
     class Config:
         from_attributes = True
